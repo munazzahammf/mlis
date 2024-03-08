@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+venv/
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# Static files
+staticfiles/
+
+# Local development
+local_settings.py
+
+# Visual Studio Code
+.vscode/
