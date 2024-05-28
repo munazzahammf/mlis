@@ -1,0 +1,30 @@
+﻿.container {
+    max-width: 450px;
+    width: 100%;
+    padding-top: 5rem;
+    margin: 0 auto;
+}
+
+.logoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    padding: 0 1rem;
+}
+
+.formForgotPassword {
+    float: right;
+}
+
+.formLoginButton {
+    width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        padding-top: 2rem;
+    }
+}

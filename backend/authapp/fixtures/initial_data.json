@@ -1,0 +1,26 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "munazzahammf",
+            "first_name": "Fathima",
+            "last_name": "Munazzaha",
+            "email": "munazzahammf@gmail.com",
+            "is_staff": true,
+            "is_active": true,
+            "is_superuser": true,
+            "password": "pbkdf2_sha256$720000$5VelW4XpXPuNrp1GmzzXy9$ymXbmj/lqOpCgukiRaT29HjwqG/xLeZdhcg11Qo+yx4="
+        }
+    },
+    {
+        "model": "authapp.LaboratoryStaff",
+        "fields": {
+            "user": 1,
+            "phone": "94761434955",
+            "address": "No 57, Mosque Road, Sawarana, Chilaw.",
+            "role": "owner",
+            "status": true
+        }
+    }
+]

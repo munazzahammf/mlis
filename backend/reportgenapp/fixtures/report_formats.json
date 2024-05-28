@@ -1,0 +1,20 @@
+[
+    {
+        "model": "reportgenapp.ReportFormat",
+        "fields": {
+            "name": "FBS",
+            "specimen_type": "BLOOD",
+            "template_path": "reportgenapp/templates/fbs.docx",
+            "created_at": "2020-07-01T00:00:00Z",
+            "updated_at": "2020-07-01T00:00:00Z",
+            "replacements": {
+                "{name}": "patient_name",
+                "{age}": "patient_age",
+                "{referredBy}": "referred_by",
+                "{labNo}": "lab_no",
+                "{results}": "results",
+                "{remarks}": "remarks"
+            }
+        }
+    }
+]
