@@ -62,4 +62,16 @@ class PatientRegisterRequestSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = '__all__'
+        fields = ('age', 'title', 'first_name', 'last_name', 'gender')
+
+
+class PatientSearchResponseSerializer(serializers.ModelSerializer):
+    text = serializers.SerializerMethodField()
+    value = serializers.IntegerField(source='id')
+
+    class Meta:
+        model = Patient
+        fields = ['text', 'value']
+
+    def get_text(self, obj):
+        return f"{obj.title} {obj.first_name} {obj.last_name} - {obj.phone}"

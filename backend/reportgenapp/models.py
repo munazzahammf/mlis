@@ -18,6 +18,9 @@ class ReportFormat(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 
 class REPORTSTATUS(models.TextChoices):
     SAMPLE_PENDING = "SAMPLE_PENDING", "Sample Pending"
@@ -28,7 +31,10 @@ class REPORTSTATUS(models.TextChoices):
 
 class ReportRequest(models.Model):
     id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey('authapp.Patient', on_delete=models.CASCADE)
+    patient = models.ForeignKey('authapp.Patient', on_delete=models.DO_NOTHING, null=True)
+    name = models.CharField(max_length=50)
+    age = models.CharField(max_length=50)
+    gender = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -46,5 +52,6 @@ class Report(models.Model):
     status = models.CharField(
         max_length=20, choices=REPORTSTATUS.choices, default=REPORTSTATUS.SAMPLE_PENDING)
     has_paid = models.BooleanField(default=False)
+    referred_by = models.CharField(max_length=50, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

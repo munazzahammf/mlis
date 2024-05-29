@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from authapp.permissions import IsLaboratoryOwner
 from authapp.serializers import (LaboratoryStaffLoginResponseSerializer, LaboratoryStaffRegisterRequestSerializer,
-                                 LoginSerializer, PatientRegisterRequestSerializer, PatientSerializer)
+                                 LoginSerializer, PatientRegisterRequestSerializer, PatientSerializer, PatientSearchResponseSerializer)
 from authapp.models import Patient
 
 
@@ -70,3 +70,48 @@ class PatientAPIView(APIView):
 
         serialized.save()
         return Response(serialized.data, status=status.HTTP_201_CREATED)
+
+
+class PatientItemAPIView(APIView):
+
+    def get(self, request, id):
+        patient = Patient.objects.filter(id=id).first()
+
+        if not patient:
+            return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serialized = PatientSerializer(patient)
+
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+    def put(self, request, id):
+        patient = Patient.objects.filter(id=id).first()
+
+        if not patient:
+            return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serialized = PatientRegisterRequestSerializer(patient, data=request.data)
+
+        if not serialized.is_valid():
+            return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serialized.save()
+        return Response(serialized.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, id):
+        patient = Patient.objects.filter(id=id).first()
+
+        if not patient:
+            return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        patient.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def patient_search(request):
+    search = request.query_params.get('q')
+    patients = Patient.objects.filter(
+        first_name__icontains=search) | Patient.objects.filter(last_name__icontains=search)
+    serialized = PatientSearchResponseSerializer(patients, many=True)
+    return Response(serialized.data, status=status.HTTP_200_OK)

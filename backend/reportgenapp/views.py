@@ -10,9 +10,20 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
-from .models import ReportRequest, Report
+from .models import ReportRequest, Report, ReportFormat
 from authapp.models import Patient
-from .serializers import AddToReportQueueRequestSerializer, GetReportQueueResponseSerializer
+from .serializers import (AddToReportQueueRequestSerializer, GetReportQueueResponseSerializer,
+                          GetReportFormatsResponseSerializer)
+
+
+class ReportFormatAPIView(APIView):
+
+    def get(self, request):
+        # Get the report formats
+        report_formats = ReportFormat.objects.all()
+
+        serialized = GetReportFormatsResponseSerializer(report_formats, many=True)
+        return Response(serialized.data, status=status.HTTP_200_OK)
 
 
 class ReportQueueAPIView(APIView):
@@ -29,27 +40,30 @@ class ReportQueueAPIView(APIView):
         # serialize the patient data
         serialized = AddToReportQueueRequestSerializer(data=request.data)
 
+        print(serialized)
+
         if not serialized.is_valid():
             return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
         patient_id = serialized.data['patient']
+        name = serialized.data['name']
+        age = serialized.data['age']
+        gender = serialized.data['gender']
         reports = serialized.data['reports']
-
-        # query the patient
-        patient = Patient.objects.filter(id=patient_id).first()
 
         # loop through the report formats and save the report to the queue
         request = ReportRequest.objects.create(
-            patient_id=patient_id
+            patient_id=patient_id,
+            name=name,
+            age=age,
+            gender=gender
         )
 
         for report in reports:
             Report.objects.create(
                 report_format_id=report['report_format'],
                 report_request=request,
-                values=report['values'],
-                status=report['status'],
-                has_paid=report['has_paid']
+                # has_paid=report['has_paid']
             )
 
         return Response(status=status.HTTP_201_CREATED)

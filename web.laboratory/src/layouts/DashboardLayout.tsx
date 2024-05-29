@@ -1,4 +1,4 @@
-﻿import {ReactNode, useState} from "react";
+﻿import {ReactNode, useEffect, useState} from "react";
 import {Avatar, Button, Image, Layout, Menu, theme} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {
@@ -12,6 +12,8 @@ import {Content, Header} from "antd/es/layout/layout";
 import {Navigate, Outlet, useNavigate} from "react-router-dom";
 import useAuthStore from "../stores/AuthStore.ts";
 import styled from "styled-components";
+import {ApiGetReportFormats} from "../services/report_format.ts";
+import useReportFormatStore from "../stores/ReportTypeStore.ts";
 
 const StyledHeader = styled(Header)`
     display: flex;
@@ -37,6 +39,19 @@ export function DashboardLayout(): ReactNode {
     if (!isAuthenticated) {
         return <Navigate to="/login" />
     }
+    
+    const setReportFormats = useReportFormatStore((state) => state.setReports)
+    
+    useEffect(() => {
+        ApiGetReportFormats()
+            .then(result => {
+                console.log(result.data) 
+                setReportFormats(result.data)
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    });
 
     return (
         <Layout style={{

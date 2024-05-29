@@ -8,3 +8,8 @@
     gender: "MALE" | "FEMALE";
     birthdate: string;
 }
+
+export interface PatientSearchResponse {
+    text: string;
+    value: string;
+}

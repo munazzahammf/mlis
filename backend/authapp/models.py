@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
@@ -46,3 +47,11 @@ class Patient(models.Model):
     birth_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title + ' ' + self.first_name + ' ' + self.last_name
+
+    @property
+    def age(self):
+        today = datetime.date.today()
+        return today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
