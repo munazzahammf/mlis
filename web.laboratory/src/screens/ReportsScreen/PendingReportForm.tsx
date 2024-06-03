@@ -1,13 +1,10 @@
 ﻿import React from "react";
-import {Button, Col, Divider, Flex, Form, Input, InputNumber, Modal, Row, Select, SelectProps} from "antd";
-import {Patient, PatientSearchResponse} from "../../types/patient";
-import {ApiAddPatient, ApiGetPatientById, ApiSearchPatients} from "../../services/patient.ts";
-import {Option, OptionProps} from "antd/es/mentions";
+import {Button, Col, Divider, Form, Input, Modal, Row, Select, Switch} from "antd";
+import {PatientSearchResponse} from "../../types/patient";
+import {ApiGetPatientById, ApiSearchPatients} from "../../services/patient.ts";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import useReportFormatStore from "../../stores/ReportTypeStore.ts";
 import {ApiAddPendingReports} from "../../services/report.ts";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 
 type ReportFormat = {
     report_format: number;
@@ -25,23 +22,26 @@ export type PendingReportFormProps = {
 export default function PendingReportForm(props:ModalFormProps) {
     const [patientData, setPatientData] = React.useState<PatientSearchResponse[]>([]);
     const [form] = Form.useForm<PendingReportFormProps>();
-    
+
     const reports = useReportFormatStore(state => state.reports);
 
     const onFormSubmit = () => {
         form
             .validateFields()
             .then((values) => {
+                console.log(values)
                 ApiAddPendingReports(values)
-                .then(response => {
-                    console.log(response);
-                })
+                    .then(response => {
+                        props.onSubmit();
+                        form.resetFields()
+                        props.setOpen(false)
+                    })
                     .catch(error => {
                         console.log(error);
                     })
             })
     }
-    
+
     const handlePatientSelect = (patientId: number) => {
         ApiGetPatientById(patientId)
             .then(response => {
@@ -101,11 +101,13 @@ export default function PendingReportForm(props:ModalFormProps) {
                         onSelect={handlePatientSelect}
                         // onChange={handleChange}
                         notFoundContent={null}
-                    >
-                        {patientData.map((d) => (
-                            <Option key={d.value} value={d.value}>{d.text}</Option>
+                        options={patientData.map((d) => (
+                            {
+                                label: d.text,
+                                value: d.value
+                            }
                         ))}
-                    </Select>
+                    />
                 </Form.Item>
                 <Divider>Or</Divider>
                 <Form.Item
@@ -117,28 +119,29 @@ export default function PendingReportForm(props:ModalFormProps) {
                 </Form.Item>
                 <Row gutter={16}>
                     <Col xs={12}>
-                    <Form.Item
-                        name="gender"
-                        rules={[{ required: true, message: 'Gender Of Patient Is Required' }]}
-                        label="Gender"
-                    >
-                        <Select
-                            placeholder="Gender of the Patient"
+                        <Form.Item
+                            name="gender"
+                            rules={[{ required: true, message: 'Gender Of Patient Is Required' }]}
+                            label="Gender"
                         >
-                            <Option value=""></Option>
-                            <Option value="MALE">MALE</Option>
-                            <Option value="FEMALE">FEMALE</Option>
-                        </Select>
-                    </Form.Item>
+                            <Select
+                                placeholder="Gender of the Patient"
+                                options={[
+                                    {label: "", value: ""},
+                                    {label: "MALE", value: "MALE"},
+                                    {label: "FEMALE", value: "FEMALE"},
+                                ]}
+                            />
+                        </Form.Item>
                     </Col>
                     <Col xs={12}>
-                    <Form.Item
-                        name="age"
-                        rules={[{ required: true, message: 'Age of Patient Is Required' }]}
-                        label="Age"
-                    >
-                        <Input placeholder="Age" />
-                    </Form.Item>
+                        <Form.Item
+                            name="age"
+                            rules={[{ required: true, message: 'Age of Patient Is Required' }]}
+                            label="Age"
+                        >
+                            <Input placeholder="Age" />
+                        </Form.Item>
                     </Col>
                 </Row>
                 <Divider>Reports List</Divider>
@@ -147,47 +150,58 @@ export default function PendingReportForm(props:ModalFormProps) {
                 >
                     {(fields, { add, remove }) => (
                         <>
-                        {fields.map(({ key, name, ...restField }, i) => (
-                        <Row gutter={16}>
-                            <Col xs={11}>
-                            <Form.Item
-                                {...restField}
-                                name={[name, 'report_format']}
-                                rules={[{ required: true, message: 'Missing Report Format' }]}
-                            >
-                                <Select
-                                    showSearch
-                                    placeholder="Report Type"
-                                    optionFilterProp="items"
-                                    // onChange={(value) => onChangeMaterial(value, i)}
-                                    // filterOption={(input, option) => {
-                                    //     return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                    // }}
-                                >
-                                    {reports.map((report, i) => (
-                                        <Option key={i} value={report.id}>{report.name}</Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                            </Col>
-                            <Col xs={11}>
-                                
-                            <Form.Item
-                                {...restField}
-                                name={[name, 'referred_by']}
-                                rules={[{ required: true, message: 'Missing Referred By' }]}
-
-                            >
-                                <Input min={1} placeholder="Referred By" />
-                            </Form.Item>
-                            </Col>
-                            <Col xs={2}>
-                            <Form.Item>
-                                <MinusCircleOutlined onClick={() => remove(name)} />
-                            </Form.Item>
-                            </Col>
-                        </Row>
-                            ))}
+                            <Row gutter={16} style={{marginBottom: 16}}>
+                                <Col xs={10}>REPORT TYPE</Col>
+                                <Col xs={9}>REFERRED BY</Col>
+                                <Col xs={3}>Paid</Col>
+                            </Row>
+                            {fields.map(({ key, name, ...restField }, i) =>
+                                (
+                                    <Row gutter={16}>
+                                        <Col xs={10}>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'report_format']}
+                                                rules={[{required: true, message: 'Missing Report Format'}]}
+                                            >
+                                                <Select
+                                                    showSearch
+                                                    placeholder="Report Type"
+                                                    optionFilterProp="items"
+                                                    // onChange={(value) => onChangeMaterial(value, i)} 
+                                                    // filterOption={(input, option) => {
+                                                    //     return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                    // }}
+                                                    options={reports.map((report) => (
+                                                        {
+                                                            label: report.name,
+                                                            value: report.id,
+                                                        }
+                                                    ))}
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={9}>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'referred_by']}
+                                                rules={[{required: true, message: 'Missing Referred By'}]}
+                                            >
+                                                <Input min={1} placeholder="Referred By"/>
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={3}>
+                                            <Form.Item name={[name, 'has_paid']} valuePropName="checked">
+                                                <Switch />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={2}>
+                                            <Form.Item>
+                                                <MinusCircleOutlined onClick={() => remove(name)}/>
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                ))}
                             <Button
                                 type="dashed"
                                 onClick={() => add()}
@@ -197,9 +211,9 @@ export default function PendingReportForm(props:ModalFormProps) {
                                 Add Report Type
                             </Button>
                         </>
-                        )}
+                    )}
 
-                            </Form.List>
+                </Form.List>
                 {/*<Form.Item*/}
                 {/*    name="title"*/}
                 {/*    rules={[{ required: true, message: 'Title of Patient Is Required' }]}*/}

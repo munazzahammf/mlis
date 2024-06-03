@@ -62,7 +62,7 @@ class PatientRegisterRequestSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = ('age', 'title', 'first_name', 'last_name', 'gender')
+        fields = ('age', 'title', 'first_name', 'last_name', 'gender', 'nic', 'phone', 'birth_date')
 
 
 class PatientSearchResponseSerializer(serializers.ModelSerializer):

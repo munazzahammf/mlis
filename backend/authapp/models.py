@@ -52,6 +52,10 @@ class Patient(models.Model):
         return self.title + ' ' + self.first_name + ' ' + self.last_name
 
     @property
+    def name(self):
+        return self.title + ' ' + self.first_name + ' ' + self.last_name
+
+    @property
     def age(self):
         today = datetime.date.today()
         return today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))

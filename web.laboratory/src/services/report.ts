@@ -7,8 +7,12 @@ const entity = "report"
 
 const endpoint = `${version}/${entity}`
 
-export const ApiGetPendingReports = () => {
-    return http.get<ReportQueue[]>(`${endpoint}/queue`)
+export const ApiGetReports = (status?: string) => {
+    return http.get<ReportQueue[]>(`${endpoint}/`, {
+        params: {
+            status
+        }
+    })
 }
 
 export const ApiAddPendingReports = (data: PendingReportFormProps) => {

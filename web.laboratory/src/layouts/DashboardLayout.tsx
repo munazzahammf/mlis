@@ -2,18 +2,20 @@
 import {Avatar, Button, Image, Layout, Menu, theme} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {
-    FileOutlined,
+    DashboardOutlined,
+    FileOutlined, FilePdfOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     UsergroupAddOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 import {Content, Header} from "antd/es/layout/layout";
-import {Navigate, Outlet, useNavigate} from "react-router-dom";
+import {Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import useAuthStore from "../stores/AuthStore.ts";
 import styled from "styled-components";
 import {ApiGetReportFormats} from "../services/report_format.ts";
 import useReportFormatStore from "../stores/ReportTypeStore.ts";
+import ReportFormat from "../screens/ReportsScreen/ReportFormat";
 
 const StyledHeader = styled(Header)`
     display: flex;
@@ -75,13 +77,23 @@ export function DashboardLayout(): ReactNode {
                 <Menu
                     theme="light"
                     mode="inline"
-                    defaultSelectedKeys={["1"]}
+                    defaultSelectedKeys={["/"]}
                     onSelect={e => onMenuItemSelected(e.key)}
                     items={[
                         {
+                            key: '/',
+                            icon: <DashboardOutlined />,
+                            label: 'Dashboard'
+                        },
+                        {
                             key: '/reports',
                             icon: <FileOutlined />,
-                            label: 'Reports',
+                            label: 'Reports'
+                        },
+                        {
+                            key: '/patients',
+                            icon: <UsergroupAddOutlined />,
+                            label: 'Patients',
                         },
                         {
                             key: '/users',
@@ -89,10 +101,10 @@ export function DashboardLayout(): ReactNode {
                             label: 'User Management',
                         },
                         {
-                            key: '/patients',
-                            icon: <UsergroupAddOutlined />,
-                            label: 'Patients',
-                        },
+                            key: '/report-formats',
+                            icon: <FilePdfOutlined />,
+                            label: 'Report Formats'
+                        }
                     ]}
                 />
             </Sider>
@@ -120,6 +132,9 @@ export function DashboardLayout(): ReactNode {
                     }}
                 >
                     <Outlet />
+                    <Routes>
+                        <Route path="*/fbs" Component={ReportFormat} />
+                    </Routes>
                 </Content>
             </Layout>
         </Layout>

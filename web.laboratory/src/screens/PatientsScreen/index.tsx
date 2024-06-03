@@ -18,6 +18,7 @@ export default function PatientsScreen() {
     const fetchPatients = () => {
         ApiGetAllPatients()
             .then(response => {
+                console.log(response.data)
                 setPatients(response.data)
             })
             .catch(error => {
