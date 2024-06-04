@@ -68,6 +68,7 @@ export function Dashboard() {
             />
             <PendingReportRequestsTable
                 data={reportQueue}
+                onSubmit={onPendingReportFormSubmit}
             />
             <Outlet context={{fetchReportQueue}}/>
         </div>

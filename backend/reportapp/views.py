@@ -14,9 +14,9 @@ class ReportAPIView(APIView):
         report_status = request.query_params.get('status', None)
 
         if report_status:
-            report_queue = Report.objects.filter(status=report_status).order_by('-created_at').all()
+            report_queue = Report.objects.filter(status=report_status).order_by('-updated_at').all()
         else:
-            report_queue = Report.objects.filter(status__in=[REPORTSTATUS.REPORT_PENDING, REPORTSTATUS.REPORT_GENERATED]).order_by('-created_at').all()
+            report_queue = Report.objects.filter(status__in=[REPORTSTATUS.REPORT_PENDING, REPORTSTATUS.REPORT_GENERATED]).order_by('-updated_at').all()
 
         serialized = GetReportsSerializer(report_queue, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)

@@ -131,6 +131,8 @@ const PendingReportRequestsTable = (props: PendingReportsTableProps) => {
                 .then(() => {
                     setStatusUpdateFormOpen(false);
                     form.resetFields()
+                    
+                    props.onSubmit()
                 })
             })
             .catch(err => {
