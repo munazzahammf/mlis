@@ -32,6 +32,7 @@ class ReportFormat(models.Model):
 class REPORTSTATUS(models.TextChoices):
     REPORT_PENDING = "PENDING", "Pending"
     REPORT_GENERATED = "GENERATED", "Generated"
+    REPORT_DELIVERED = "DELIVERED", "Delivered"
 
 
 class ReportRequest(models.Model):

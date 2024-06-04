@@ -28,16 +28,6 @@ const columns: TableProps<ReportQueue>['columns'] = [
         }
     },
     {
-        title: 'Payment Status',
-        dataIndex: 'has_paid',
-        key: 'has_paid',
-        align: 'center',
-        render: text => {
-            console.log(text)
-            return text ? "PAID": "DUE"
-        }
-    },
-    {
         title: 'Actions',
         dataIndex: 'actions',
         key: 'actions',

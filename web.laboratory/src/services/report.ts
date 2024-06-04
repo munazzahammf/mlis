@@ -18,3 +18,7 @@ export const ApiGetReports = (status?: string) => {
 export const ApiAddPendingReports = (data: PendingReportFormProps) => {
     return http.post(`${endpoint}/queue`, data)
 }
+
+export const ApiUpdateReportStatus = (id, data) => {
+    return http.put(`${endpoint}/status/${id}`, data)
+}

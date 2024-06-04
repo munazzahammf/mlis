@@ -1,3 +1,4 @@
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,7 +16,7 @@ class ReportAPIView(APIView):
         if report_status:
             report_queue = Report.objects.filter(status=report_status).order_by('-created_at').all()
         else:
-            report_queue = Report.objects.filter(status=REPORTSTATUS.REPORT_PENDING).order_by('-created_at').all()
+            report_queue = Report.objects.filter(status__in=[REPORTSTATUS.REPORT_PENDING, REPORTSTATUS.REPORT_GENERATED]).order_by('-created_at').all()
 
         serialized = GetReportsSerializer(report_queue, many=True)
         return Response(serialized.data, status=status.HTTP_200_OK)
@@ -41,3 +42,17 @@ class ReportItemAPIView(APIView):
         )
 
         return Response(serialized.data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+def report_status(request, id):
+    # Update report status
+    report = Report.objects.filter(id=id).first()
+
+    report_delivered = request.data.get('delivered', False)
+    if report_delivered:
+        report.status = REPORTSTATUS.REPORT_DELIVERED
+    report.has_paid = request.data.get('has_paid', False)
+    report.save()
+
+    return Response({'status': 'Report status updated'}, status=status.HTTP_200_OK)
