@@ -1,28 +1,28 @@
-﻿import { Divider, Form, Input, InputNumber } from "antd";
+﻿import {Col, Divider, Form, Input, InputNumber, Row, Select} from "antd";
+import {ReportFormProps} from "./index.tsx";
 
-export default function FBS() {
+export default function FBS(props: ReportFormProps) {
+    const ranges = {
+            'glucose-fasting': [70, 110]
+        }
+    
+    const handleRange = (name: string, value: number | null) => {
+        const constraint = ranges[name]
 
-    // useEffect(() => {
-    // })
+        const field = ['values', `${name}-remarks`]
+        
+        if (value === null)
+            return
 
-    // const onSubmit = (values) => {
-    //     console.log(values);
-    //     // when the pdf response comes open in the browser
-    //     ApiGenerateReport(values)
-    //         .then(response => {
-    //             const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-    //
-    //             // Create a URL for the Blob
-    //             const pdfUrl = URL.createObjectURL(pdfBlob);
-    //
-    //             // Open the URL in a new window
-    //             window.open(pdfUrl);
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         })
-    // }
-
+        if (value < constraint[0]) {
+            props.form.setFieldValue(field, 'LOW')
+        } else if (value > constraint[1]) {
+            props.form.setFieldValue(field, 'HIGH')
+        } else {
+            props.form.setFieldValue(field, 'NORMAL')
+        }
+    }
+    
     return (
         <>
             <Form.Item
@@ -33,18 +33,34 @@ export default function FBS() {
                 <Input placeholder="Dr. Supun Gamlath" />
             </Form.Item>
             <Divider>FBS Values</Divider>
-            <Form.Item
-                label="GLUCOSE-FASTING"
-                rules={[{ required: true, message: 'GLUCOSE FASTING Required' }]}
-                name={['values', 'glucose-fasting']}
-            >
-                <InputNumber
-                    style={{width: "100%"}}
-                    addonAfter="mg / dL"
-                    min={15}
-                    max={1000}
-                />
-            </Form.Item>
+            <Row gutter={16}>
+                <Col xs={16}>
+                    <Form.Item
+                        label="GLUCOSE-FASTING"
+                        rules={[{ required: true, message: 'GLUCOSE FASTING Required' }]}
+                        name={['values', 'glucose-fasting']}
+                    >
+                        <InputNumber
+                            style={{width: "100%"}}
+                            addonAfter="mg / dL"
+                            min={15}
+                            max={1000}
+                            onChange={(value) => handleRange('glucose-fasting', value)}
+                        />
+                    </Form.Item>
+                </Col>
+                <Col xs={8}>
+                    <Form.Item
+                        label="REMARKS"
+                        rules={[{ required: true, message: 'GLUCOSE FASTING Required' }]}
+                        name={['values', 'glucose-fasting-remarks']}
+                    >
+                        <Input
+                            readOnly
+                        />
+                    </Form.Item>
+                </Col>
+            </Row>
         </>
     )
 }

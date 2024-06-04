@@ -60,6 +60,7 @@ class Report(models.Model):
     referred_by = models.CharField(max_length=50, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     delivery_date = models.DateTimeField(null=True)
+    sample_id = models.CharField(max_length=8, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

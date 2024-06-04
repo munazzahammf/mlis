@@ -1,12 +1,12 @@
-﻿import {useParams} from "react-router-dom";
+﻿import {useOutletContext, useParams} from "react-router-dom";
 import FBS from "./FBS.tsx";
 import ReportFormatLayout from "../../../layouts/ReportFormatLayout.tsx";
 import {Button, Col, Divider, Form, FormInstance, Input, Row, Select, Space} from "antd";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {ApiGetReportRequestById} from "../../../services/report_request.ts";
 import LipidProf from "./LipidProf.tsx";
 import {ApiGenerateReport, ApiSaveReportData} from "../../../services/report_generate.ts";
-import {PrinterFilled} from "@ant-design/icons";
+import {PrinterFilled, SaveFilled} from "@ant-design/icons";
 
 type UrlParams = {
     reportId: string;
@@ -14,7 +14,7 @@ type UrlParams = {
 }
 
 export type ReportFormProps = {
-    form?: FormInstance<string>;
+    form: FormInstance<string>;
 }
 
 const ReportMapping:{ [key: string]: React.FC<ReportFormProps> } = {
@@ -25,6 +25,9 @@ const ReportMapping:{ [key: string]: React.FC<ReportFormProps> } = {
 export default function ReportFormat() {
     const params = useParams<UrlParams>();
     const [form] = Form.useForm();
+    const [isGenerated, setIsGenerated] = useState(false);
+    
+    const { fetchReportQueue } = useOutletContext()
 
     const reportId = params.reportId as string;
     const reportFormat = params.reportFormat as string;
@@ -37,6 +40,8 @@ export default function ReportFormat() {
 
                 console.log(res.data)
                 form.setFieldsValue(res.data)
+
+                setIsGenerated(res.data.status === 'GENERATED')
             })
             .then(()=> {
             })
@@ -48,9 +53,24 @@ export default function ReportFormat() {
 
 
     const onSubmit = async (values) => {
-        try {
-            await ApiSaveReportData(reportId, values)
+        console.log(values)
+        if (isGenerated) {
+            onPrint(values)
+        } else {
+            ApiSaveReportData(reportId, values)
+                .then(res => {
+                    setIsGenerated(true)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
 
+        fetchReportQueue()
+    }
+
+    const onPrint = async (values) => {
+        try {
             // when the pdf response comes open in the browser
             const response = await ApiGenerateReport(reportId, values)
 
@@ -115,9 +135,8 @@ export default function ReportFormat() {
                 </Row>
                 {CurrentReport !== undefined ? <CurrentReport form={form} />: <></> }
                 <Space direction="horizontal">
-                    <Button type="default" htmlType="submit">DRAFT</Button>
-                    <Button type="primary" htmlType="submit">SAVE</Button>
-                    <Button type="primary" htmlType="submit" icon={<PrinterFilled />}>SAVE & PRINT</Button>
+                    {!isGenerated ? <Button type="primary" icon={<SaveFilled />} htmlType="submit">SAVE</Button>:
+                    <Button type="primary" htmlType="submit" icon={<PrinterFilled />}>PRINT</Button>}
                 </Space>
             </Form>
         </ReportFormatLayout>

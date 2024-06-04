@@ -31,6 +31,7 @@ export function DashboardLayout(): ReactNode {
     } = theme.useToken();
 
     const navigate = useNavigate();
+    
 
     const onMenuItemSelected = (key: string) => {
         navigate(key)
@@ -42,6 +43,7 @@ export function DashboardLayout(): ReactNode {
         return <Navigate to="/login" />
     }
     
+    const userInfo = useAuthStore(state => state.userInfo)
     const setReportFormats = useReportFormatStore((state) => state.setReports)
     
     useEffect(() => {
@@ -54,7 +56,8 @@ export function DashboardLayout(): ReactNode {
                 console.log(error);
             })
     });
-
+    
+    console.log(userInfo)
     return (
         <Layout style={{
             height: "100vh"
@@ -120,7 +123,9 @@ export function DashboardLayout(): ReactNode {
                             height: 64,
                         }}
                     />
-                    <Avatar />
+                    <Avatar style={{backgroundColor: 'orange'}}>
+                        {userInfo.first_name[0] + userInfo.last_name[0]}
+                    </Avatar>
                 </StyledHeader>
                 <Content
                     style={{

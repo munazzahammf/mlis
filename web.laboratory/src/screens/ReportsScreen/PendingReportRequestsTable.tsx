@@ -2,6 +2,7 @@
 import {Report, ReportQueue} from "../../types/report";
 import {Link, useNavigate} from "react-router-dom";
 import {CheckOutlined, EditFilled, ForwardOutlined} from "@ant-design/icons";
+import {formatDistanceToNow} from "date-fns";
 
 interface PendingReportsTableProps {
     data: ReportQueue[];
@@ -26,6 +27,12 @@ const columns: TableProps<ReportQueue>['columns'] = [
         align: 'center'
     },
     {
+        title: 'SAMPLE ID',
+        dataIndex: 'sample_id',
+        key: 'sample_id',
+        align: 'center'
+    },
+    {
         title: 'Payment Status',
         dataIndex: 'has_paid',
         key: 'has_paid',
@@ -41,7 +48,17 @@ const columns: TableProps<ReportQueue>['columns'] = [
         key: 'delivery_date',
         render: (text) => {
             if (text) {
-                return new Date(text).toLocaleString()
+                {
+                    const deliverDate = new Date(text);
+                    const now = new Date();
+                    
+                    let color = null;
+                    
+                    if (deliverDate < now) {
+                        color = 'red'
+                    }
+                    return <span style={{color: color}}>{formatDistanceToNow(new Date(text), {addSuffix: true})}</span>
+                }
             }
         }
     },
@@ -64,7 +81,7 @@ const columns: TableProps<ReportQueue>['columns'] = [
         render: (text, record) => {
             const isReportPending = record.status === 'PENDING'
             const isGenerated = record.status === 'GENERATED'
-            
+
             const url = `${record.report_format}/${record.id}`
             return (
                 <Space>

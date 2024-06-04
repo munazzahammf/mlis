@@ -26,7 +26,7 @@ class GetReportQueueResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ('id', 'name', 'has_paid', 'status', 'report_format', 'delivery_date', 'name', 'phone', 'created_at')
+        fields = ('id', 'name', 'has_paid', 'sample_id', 'status', 'report_format', 'delivery_date', 'name', 'phone', 'created_at')
 
 
 class ReportItemSerializer(serializers.ModelSerializer):

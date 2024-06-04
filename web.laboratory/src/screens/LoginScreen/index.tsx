@@ -22,7 +22,7 @@ export function LoginScreen() {
         ApiLogin(values.username, values.password)
             .then((res) => {
                 http.defaults.headers.common["Authorization"] = `Token ${res.data.token}`;
-                setAuthenticated(res.data.token);
+                setAuthenticated(res.data);
                 navigate("/");
             })
             .catch(err => {

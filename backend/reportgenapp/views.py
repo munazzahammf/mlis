@@ -1,4 +1,6 @@
 import os
+import random
+
 import pythoncom
 import datetime
 import docx2pdf
@@ -77,6 +79,19 @@ class ReportQueueAPIView(APIView):
             # Get the report format
             report_format = ReportFormat.objects.filter(id=report['report_format']).first()
 
+            if 'has_paid' not in report:
+                report['has_paid'] = False
+
+            # Get All Sample Ids in the Report
+            sample_ids = Report.objects.values_list('sample_id', flat=True)
+
+            # Generate a random 5 digit sample id
+            sample_id = None
+            while True:
+                sample_id = random.randint(10000, 99999)
+                if sample_id not in sample_ids:
+                    break
+
             delivery_date = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
                 minutes=report_format.generation_time)
 
@@ -85,7 +100,8 @@ class ReportQueueAPIView(APIView):
                 report_request=request,
                 referred_by=report['referred_by'],
                 delivery_date=delivery_date,
-                has_paid=report['has_paid']
+                has_paid=report['has_paid'],
+                sample_id=sample_id
             )
 
         return Response(status=status.HTTP_201_CREATED)

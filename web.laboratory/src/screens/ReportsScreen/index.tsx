@@ -16,7 +16,6 @@ export function Dashboard() {
         ApiGetReports()
             .then(response => {
                 setReportQueue(response.data)
-                console.log(response.data)
             })
             .catch(error => {
                 console.log(error);
@@ -70,7 +69,7 @@ export function Dashboard() {
             <PendingReportRequestsTable
                 data={reportQueue}
             />
-            <Outlet />
+            <Outlet context={{fetchReportQueue}}/>
         </div>
     )
 }

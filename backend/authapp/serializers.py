@@ -11,6 +11,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 class LaboratoryStaffLoginResponseSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     token = serializers.CharField(max_length=255)
     first_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)
@@ -19,7 +20,7 @@ class LaboratoryStaffLoginResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LaboratoryStaff
-        fields = ('first_name', 'last_name', 'username',
+        fields = ('id', 'first_name', 'last_name', 'username',
                   'email', 'phone', 'address', 'role', 'token')
 
 
@@ -35,7 +36,9 @@ class LoginResponseSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password', 'id', 'is_active')
+
+# class GetLaboratoryStaffSerializer(serializers.ModelSerializer):
 
 
 class LaboratoryStaffRegisterRequestSerializer(serializers.ModelSerializer):
@@ -47,6 +50,7 @@ class LaboratoryStaffRegisterRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
+        user_data['is_staff'] = True
         user = User.objects.create_user(**user_data)
         laboratory_staff = LaboratoryStaff.objects.create(
             user=user, **validated_data)
