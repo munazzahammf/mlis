@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/v1/', include('authapp.urls')),
     path('api/v1/', include('reportgenapp.urls')),
     path('api/v1/', include('reportapp.urls')),
+    path('api/v1/', include('patientapp.urls'))
 ]
