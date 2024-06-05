@@ -42,11 +42,12 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=11)
     nic = models.CharField(max_length=12, null=True)
-    gender = models.CharField(max_length=10, choices=Gender.choices)
-    title = models.CharField(max_length=10, choices=Title.choices)
-    birth_date = models.DateField()
+    gender = models.CharField(max_length=10, choices=Gender.choices, null=True)
+    title = models.CharField(max_length=10, choices=Title.choices, null=True)
+    birth_date = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.title + ' ' + self.first_name + ' ' + self.last_name

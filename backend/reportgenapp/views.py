@@ -186,7 +186,6 @@ def generate_report(request, report_id):
             if value in report_dict:
                 replacements[key] = report_dict[value]
 
-        print(report_dict)
 
         # replacing the report values
         for key, value in replacements.items():
