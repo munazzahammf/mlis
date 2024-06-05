@@ -91,7 +91,7 @@ export function DashboardLayout(): ReactNode {
                         {
                             key: '/reports',
                             icon: <FileOutlined />,
-                            label: 'Reports'
+                            label: 'Delivered Reports'
                         },
                         {
                             key: '/patients',
@@ -101,7 +101,7 @@ export function DashboardLayout(): ReactNode {
                         {
                             key: '/users',
                             icon: <UserOutlined />,
-                            label: 'User Management',
+                            label: 'Staff Management',
                         },
                         {
                             key: '/report-formats',
